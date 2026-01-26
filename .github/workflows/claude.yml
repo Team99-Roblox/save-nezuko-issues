@@ -35,6 +35,12 @@ jobs:
       - name: Configure git for private repos
         run: git config --global url."https://x-access-token:${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}@github.com/".insteadOf "https://github.com/"
 
+      - name: Setup Node.js with GitHub Packages auth
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://npm.pkg.github.com'
+
       - name: Run Claude Code
         id: claude
         uses: white-dragon-tools/claude-code-action@main
