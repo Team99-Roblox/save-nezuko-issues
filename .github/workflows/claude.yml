@@ -41,7 +41,7 @@ jobs:
           additional_permissions: |
             actions: read
           claude_args: |
-            --allowedTools "Bash(npm:*),Bash(git:*)"  # Allows only npm and git commands
+            --dangerously-skip-permissions
             
       - name: Check for changes and create PR
         if: success()
