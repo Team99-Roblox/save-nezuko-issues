@@ -36,7 +36,9 @@ jobs:
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
           prompt: '/code-review:code-review ${{ env.TARGET_REPO }}/pull/${{ github.event.client_payload.pr_number }}'
-
+          claude_args: |
+            --allowedTools "Bash(npm:*),Bash(git:*)"  # Allows only npm and git commands
+       
       - name: Post review comment to PR
         if: success()
         env:
