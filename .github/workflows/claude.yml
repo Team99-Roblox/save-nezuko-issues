@@ -8,6 +8,7 @@ on:
 
 env:
   TARGET_REPO: Team99-Roblox/save-nezuko
+  NODE_AUTH_TOKEN: ${{ secrets.BEVY_PACKAGES_TOKEN }}
 
 jobs:
   claude:
