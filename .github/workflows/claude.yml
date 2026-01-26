@@ -41,6 +41,12 @@ jobs:
           node-version: 20
           registry-url: 'https://npm.pkg.github.com'
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Run Claude Code
         id: claude
         uses: white-dragon-tools/claude-code-action@main
