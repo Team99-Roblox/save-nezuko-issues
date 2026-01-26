@@ -31,6 +31,11 @@ jobs:
           ref: dev
           fetch-depth: 0
 
+      - name: Setup GitHub Packages auth
+        run: |
+          echo "@white-dragon-bevy:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.BEVY_PACKAGES_TOKEN }}" >> .npmrc
+
       - name: Run Claude Code
         id: claude
         uses: white-dragon-tools/claude-code-action@main
@@ -41,6 +46,12 @@ jobs:
           base_branch: dev
           additional_permissions: |
             actions: read
+          settings: |
+            {
+              "env": {
+                "NODE_AUTH_TOKEN": "${{ secrets.BEVY_PACKAGES_TOKEN }}"
+              }
+            }
           claude_args: |
             --dangerously-skip-permissions
             
