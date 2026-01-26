@@ -31,6 +31,9 @@ jobs:
           ref: dev
           fetch-depth: 0
 
+      - name: Configure git for private repos
+        run: git config --global url."https://x-access-token:${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}@github.com/".insteadOf "https://github.com/"
+
       - name: Setup GitHub Packages auth
         run: |
           echo "@white-dragon-bevy:registry=https://npm.pkg.github.com" >> .npmrc
