@@ -34,12 +34,6 @@ jobs:
       - name: Configure git for private repos
         run: git config --global url."https://x-access-token:${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}@github.com/".insteadOf "https://github.com/"
 
-      - name: Setup GitHub Packages auth
-        run: |
-          echo "@white-dragon-bevy:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "@white-dragon-tools:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.BEVY_PACKAGES_TOKEN }}" >> .npmrc
-
       - name: Run Claude Code
         id: claude
         uses: white-dragon-tools/claude-code-action@main
