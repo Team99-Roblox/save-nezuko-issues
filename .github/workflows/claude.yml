@@ -34,6 +34,7 @@ jobs:
       - name: Setup GitHub Packages auth
         run: |
           echo "@white-dragon-bevy:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "@white-dragon-tools:registry=https://npm.pkg.github.com" >> .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.BEVY_PACKAGES_TOKEN }}" >> .npmrc
 
       - name: Run Claude Code
