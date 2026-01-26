@@ -27,6 +27,7 @@ jobs:
         with:
           repository: ${{ env.TARGET_REPO }}
           token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+          ref: dev
           fetch-depth: 0
 
       - name: Run Claude Code
