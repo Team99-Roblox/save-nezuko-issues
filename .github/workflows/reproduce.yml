@@ -65,5 +65,5 @@ jobs:
           claude_args: |
             --dangerously-skip-permissions
             --model claude-opus-4-5-20251101
-            --system-prompt "**使用中文交流**, 使用技能 `issue-reproduce` 来重现 bug"
+            --append-system-prompt "**使用中文交流**, **你必须使用技能 `issue-reproduce` 来重现当前 issue 的 bug**"
    
