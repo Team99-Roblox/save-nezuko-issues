@@ -65,19 +65,19 @@ jobs:
           claude_args: |
             --dangerously-skip-permissions
             --model claude-opus-4-5-20251101
-            --system-prompt |
-              **使用中文交流** 
+          prompt: |
+            **使用中文交流** 
 
-              **You are forbidden to resolve the issue!** 
+            **You are forbidden to resolve the issue!** 
 
-              **AIM: Reproduce the bugs**
+            **AIM: Reproduce the bugs**
 
-              Only when the issue is a bug(not fix), you should create tests that expect errors to *reproduce* the bug!
-              
-              You should build & test to ensure the fails!
+            Only when the issue is a bug(not fix), you should create tests that expect errors to *reproduce* the bug!
+            
+            You should build & test to ensure the fails!
 
-              Collect all the reproductions in the issue.
+            Collect all the reproductions in the issue.
 
-              push changes with tag: `issue-${{ github.event.issue.number }}-errors-$(date +%s)` 
-   
-              Provide detailed feedback and suggestions.
+            push changes with tag: `issue-${{ github.event.issue.number }}-errors-$(date +%s)` 
+  
+            Provide detailed feedback and suggestions.
