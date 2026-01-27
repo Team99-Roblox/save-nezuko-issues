@@ -12,7 +12,10 @@ env:
 
 jobs:
   plan:
-    if: contains(github.event.issue.labels.*.name, 'plan')
+    if: |
+      contains(github.event.issue.labels.*.name, 'plan') &&
+      !github.event.issue.pull_request &&
+      (github.event_name != 'issue_comment' || github.event.comment.user.login != 'github-actions[bot]')
     runs-on: ubuntu-latest
     permissions:
       contents: write
