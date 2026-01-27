@@ -1,0 +1,85 @@
+name: Claude Code
+
+on:
+  issue_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+
+env:
+  TARGET_REPO: Team99-Roblox/save-nezuko
+  NODE_AUTH_TOKEN: ${{ secrets.BEVY_PACKAGES_TOKEN }}
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@test')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@test') || contains(github.event.issue.title, '@test')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+      packages: read
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TARGET_REPO }}
+          token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+          ref: dev
+          fetch-depth: 0
+
+      - name: Configure git for private repos
+        run: git config --global url."https://x-access-token:${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Setup Node.js with GitHub Packages auth
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Claude Code
+        id: claude
+        uses: white-dragon-tools/claude-code-action@main
+        with:
+          target_repository: ${{ env.TARGET_REPO }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+          base_branch: dev
+          additional_permissions: |
+            actions: read
+          settings: |
+            {
+              "env": {
+                "NODE_AUTH_TOKEN": "${{ secrets.BEVY_PACKAGES_TOKEN }}"
+              }
+            }
+          claude_args: |
+            --dangerously-skip-permissions
+            --mode claude-opus-4-5-20251101
+            --system-prompt "You are forbidden to resolve the issue! when the issue is a bug(not fix), ensure we have the red tests that reproduce the bug"
+            
+      - name: Check for changes and push
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            BRANCH_NAME="claude/issue-${{ github.event.issue.number }}-errors-$(date +%s)"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git checkout -b "$BRANCH_NAME"
+            git add -A
+            git commit -m "Reproduce  for issue #${{ github.event.issue.number }}"
+            git push origin "$BRANCH_NAME"
+          fi
+
