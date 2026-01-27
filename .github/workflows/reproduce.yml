@@ -74,9 +74,7 @@ jobs:
 
               Only when the issue is a bug(not fix), you should create tests that expect errors to *reproduce* the bug!
               
-              You should build & test to ensure the fails!
+              **You should build & run test to ensure the fails!**
 
-              Collect all the reproductions in the issue.
-
-              push changes with tag: `issue-${{ github.event.issue.number }}-errors-$(date +%s)` 
+              push changes with `tag`: `issue-${{ github.event.issue.number }}-errors-$(date +%s)`, *leave the link* in issue comments.
    
