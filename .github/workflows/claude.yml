@@ -51,10 +51,13 @@ jobs:
         id: claude
         uses: white-dragon-tools/claude-code-action@main
         with:
+          # 必须
           target_repository: ${{ env.TARGET_REPO }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
           base_branch: dev
+
+          # --
           additional_permissions: |
             actions: read
           settings: |

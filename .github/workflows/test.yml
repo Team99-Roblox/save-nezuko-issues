@@ -70,20 +70,14 @@ jobs:
           claude_args: |
             --dangerously-skip-permissions
             --model claude-opus-4-5-20251101
-            --system-prompt "**使用中文交流** **You are forbidden to resolve the issue!** Only when the issue is a bug(not fix), you should create tests that expect errors to reproduce the bug!, you should build & test to ensure the fails!"
-            
-      - name: Check for changes and push
-        if: success()
-        env:
-          GH_TOKEN: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
-        run: |
-          if [[ -n $(git status --porcelain) ]]; then
-            BRANCH_NAME="claude/issue-${{ github.event.issue.number }}-errors-$(date +%s)"
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git checkout -b "$BRANCH_NAME"
-            git add -A
-            git commit -m "Reproduce  for issue #${{ github.event.issue.number }}"
-            git push origin "$BRANCH_NAME"
-          fi
+          prompt: |
+            **使用中文交流** 
 
+            **You are forbidden to resolve the issue!** 
+
+            Only when the issue is a bug(not fix), you should create tests that expect errors to reproduce the bug!
+            
+            You should build & test to ensure the fails!
+
+            push changes with tag: `issue-${{ github.event.issue.number }}-errors-$(date +%s)` 
+   
