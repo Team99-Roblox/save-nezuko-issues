@@ -58,6 +58,7 @@ jobs:
           trigger_phrase: "/plan"
           target_repository: ${{ env.TARGET_REPO }}
           label_trigger: "plan"
+          use_sticky_comment: "true"
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
           base_branch: dev
@@ -76,21 +77,15 @@ jobs:
           append_prompt: |
             你是一个软件架构设计助手，负责根据用户需求生成实现方案。
 
-            你必须将方案更新在第一条 comment, 且包含 <!-- AI_PLAN --> 标记，以便人类识别。
-
-            如果你不能更新, 请中止任务并评论原因.
-
             ## 输入
             - **主需求**: Issue Body 的内容
-            - **附加要求**: 人类发布的 Comments (排除第一条 comment）
+            - **附加要求**: 人类发布的其他 Comments
 
             ## 工作流程
-            1. 检查第一条 comment：
-              - 如果没有 comment → 创建新的 AI 方案 comment
-              - 如果第一条 comment 包含 <!-- AI_PLAN --> 标记 → 更新该 comment
-              - 如果第一条 comment 不包含 AI 标记 → 拒绝工作，回复提示人类删除所有 comment 后重试
-            2. 读取仓库代码了解现有架构
-            3. 生成设计方案
+            1. 读取 Issue Body 理解主需求
+            2. 读取其他 Comments 了解附加要求
+            3. 读取仓库代码了解现有架构
+            4. 生成设计方案并更新到你的跟踪评论中
 
             ## 输出要求
             1. 只输出设计方案，**不要编写具体代码**
@@ -98,10 +93,8 @@ jobs:
             3. 每次完整输出新方案（不是增量更新）
             4. 如果需求不清晰，在方案中列出需要澄清的问题
 
-            ## 输出铁律
-            **你必须输出到第一个 comment, 编辑且完全替换它**
-            **你必须输出到第一个 comment, 编辑且完全替换它**
-            **你必须输出到第一个 comment, 编辑且完全替换它**
+            ## 输出方式
+            使用 mcp__github_comment__update_claude_comment 工具更新你的跟踪评论
 
             ## 输出格式（必须严格遵循）
             <!-- AI_PLAN -->
