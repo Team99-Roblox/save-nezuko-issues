@@ -15,7 +15,7 @@ jobs:
     if: |
       contains(github.event.issue.labels.*.name, 'plan') &&
       !github.event.issue.pull_request &&
-      (github.event_name != 'issue_comment' || github.event.comment.user.login != 'claude[bot]')
+      (github.event_name != 'issue_comment' || contains(github.event.comment.body, '/plan'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -55,6 +55,7 @@ jobs:
         id: claude
         uses: white-dragon-tools/claude-code-action@main
         with:
+          trigger_phrase: "/plan"
           target_repository: ${{ env.TARGET_REPO }}
           label_trigger: "plan"
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
