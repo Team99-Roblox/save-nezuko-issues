@@ -4,7 +4,7 @@ on:
   issue_comment:
     types: [created]
   issues:
-    types: [opened, assigned]
+    types: [opened, labeled]
 
 env:
   TARGET_REPO: Team99-Roblox/save-nezuko
@@ -13,8 +13,8 @@ env:
 jobs:
   claude:
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/test')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '/test') || contains(github.event.issue.title, '/test')))
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/reproduce')) ||
+      (github.event_name == 'issues' && contains(join(github.event.issue.labels.*.name, ','), 'bug'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -55,7 +55,7 @@ jobs:
         uses: white-dragon-tools/claude-code-action@main
         with:
           target_repository: ${{ env.TARGET_REPO }}
-          trigger_phrase: "/test"
+          trigger_phrase: "/reproduce"
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
           base_branch: dev
@@ -70,14 +70,18 @@ jobs:
           claude_args: |
             --dangerously-skip-permissions
             --model claude-opus-4-5-20251101
-          prompt: |
-            **使用中文交流** 
+            --system-prompt |
+              **使用中文交流** 
 
-            **You are forbidden to resolve the issue!** 
+              **You are forbidden to resolve the issue!** 
 
-            Only when the issue is a bug(not fix), you should create tests that expect errors to reproduce the bug!
-            
-            You should build & test to ensure the fails!
+              **AIM: Reproduce the bugs**
 
-            push changes with tag: `issue-${{ github.event.issue.number }}-errors-$(date +%s)` 
+              Only when the issue is a bug(not fix), you should create tests that expect errors to *reproduce* the bug!
+              
+              You should build & test to ensure the fails!
+
+              Collect all the reproductions in the issue.
+
+              push changes with tag: `issue-${{ github.event.issue.number }}-errors-$(date +%s)` 
    
