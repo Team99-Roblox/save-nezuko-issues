@@ -1,0 +1,114 @@
+name: Weekly Summary
+
+on:
+  schedule:
+    # 每周一早上10点（UTC+8，即 UTC 2:00）运行
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+env:
+  TARGET_REPO: Team99-Roblox/save-nezuko
+
+jobs:
+  weekly-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude Code for Weekly Summary
+        uses: white-dragon-tools/claude-code-action@main
+        with:
+          target_repository: ${{ env.TARGET_REPO }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+          base_branch: dev
+          claude_args: |
+            --allowedTools "Bash(gh issue list:*),Bash(gh issue view:*),Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh issue create:*),Bash(gh api:*)"
+
+          prompt: |
+            **使用中文交流**
+
+            你是一个每周总结报告生成助手。你的任务是收集过去一周的项目活动并生成一份全面的周报。
+
+            REPO: ${{ github.repository }}
+            TARGET_REPO: Team99-Roblox/save-nezuko
+
+            任务步骤：
+
+            1. 收集过去7天的活动数据：
+              - 使用 `gh issue list --repo Team99-Roblox/save-nezuko --state all --limit 100` 获取 issues
+              - 使用 `gh pr list --repo Team99-Roblox/save-nezuko --state all --limit 100` 获取 PRs
+              - 使用 `gh api repos/Team99-Roblox/save-nezuko/commits --jq '.[].commit.message' | head -50` 获取最近的提交信息
+              - 筛选出过去7天内的活动
+
+            2. 分析并整理以下信息：
+
+              **本周完成的工作：**
+              - 已关闭的 issues（按类型分类：bug修复、功能开发、优化等）
+              - 已合并的 PRs
+              - 主要的代码变更和功能更新
+
+              **进行中的工作：**
+              - 当前打开的 PRs 及其状态
+              - 正在处理的 issues
+
+              **下周计划：**
+              - 高优先级的待处理 issues
+              - 计划中的功能开发
+
+              **问题和风险：**
+              - 长期未解决的 issues
+              - 阻塞项
+              - 需要关注的技术债务
+
+            3. 生成周报，格式如下：
+              ```
+              # 每周项目总结 - [日期范围]
+
+              ## 本周亮点
+              - [重要的完成项和里程碑]
+
+              ## 完成的工作
+
+              ### Bug 修复
+              - [列出修复的 bugs]
+
+              ### 功能开发
+              - [列出新功能]
+
+              ### 优化改进
+              - [列出优化项]
+
+              ## 进行中的工作
+              - [列出进行中的工作]
+
+              ## 下周计划
+              - [列出下周重点工作]
+
+              ## 问题和风险
+              - [列出需要关注的问题]
+
+              ## 统计数据
+              - 新增 Issues: X
+              - 关闭 Issues: X
+              - 合并 PRs: X
+              - 提交次数: X
+              ```
+
+            4. 在 ${{ github.repository }} 仓库创建一个新的 issue 发布周报：
+              - 使用 `gh issue create --repo ${{ github.repository }} --title "每周项目总结 - $(date +%Y-%m-%d)" --body "报告内容" --label "weekly-summary"`
+
+            注意事项：
+            - 报告要全面但不冗长
+            - 突出重要的进展和成就
+            - 明确指出风险和阻塞项
+            - 提供有价值的统计数据
+            - 如果某个部分没有相关内容，注明"无"

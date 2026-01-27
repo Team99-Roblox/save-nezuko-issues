@@ -1,0 +1,82 @@
+name: Daily Standup Summary
+
+on:
+  schedule:
+    # 每天早上9点（UTC+8，即 UTC 1:00）运行
+    - cron: '0 1 * * 1-5'
+  workflow_dispatch:
+
+env:
+  TARGET_REPO: Team99-Roblox/save-nezuko
+
+jobs:
+  daily-standup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude Code for Daily Standup
+        uses: white-dragon-tools/claude-code-action@main
+        with:
+          target_repository: ${{ env.TARGET_REPO }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+          base_branch: dev
+          claude_args: |
+            --allowedTools "Bash(gh issue list:*),Bash(gh issue view:*),Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh issue create:*)"
+
+          prompt: |
+            **使用中文交流**
+
+            你是一个每日晨报和站会概要生成助手。你的任务是收集过去24小时的项目活动并生成一份简洁的站会报告。
+
+            REPO: ${{ github.repository }}
+            TARGET_REPO: Team99-Roblox/save-nezuko
+
+            任务步骤：
+
+            1. 收集过去24小时的活动数据：
+              - 使用 `gh issue list --repo Team99-Roblox/save-nezuko --state all --limit 50` 获取最近的 issues
+              - 使用 `gh pr list --repo Team99-Roblox/save-nezuko --state all --limit 50` 获取最近的 PRs
+              - 筛选出过去24小时内创建或更新的内容
+
+            2. 分析并整理以下信息：
+              - 昨日完成：已关闭的 issues 和已合并的 PRs
+              - 进行中：当前打开的 issues 和 PRs
+              - 新增：过去24小时新创建的 issues
+              - 阻塞项：标记为 blocked 或高优先级但未处理的 issues
+
+            3. 生成站会报告，格式如下：
+              ```
+              # 每日站会概要 - [日期]
+
+              ## 昨日完成
+              - [列出已完成的工作]
+
+              ## 今日计划
+              - [列出进行中和待处理的高优先级工作]
+
+              ## 阻塞项/风险
+              - [列出任何阻塞或风险项]
+
+              ## 统计
+              - 新增 Issues: X
+              - 关闭 Issues: X
+              - 合并 PRs: X
+              ```
+
+            4. 在 ${{ github.repository }} 仓库创建一个新的 issue 发布报告：
+              - 使用 `gh issue create --repo ${{ github.repository }} --title "每日站会概要 - $(date +%Y-%m-%d)" --body "报告内容" --label "standup"`
+
+            注意事项：
+            - 报告要简洁明了，便于快速阅读
+            - 重点突出重要的进展和阻塞项
+            - 如果没有相关活动，在对应部分注明"无"
