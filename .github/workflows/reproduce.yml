@@ -65,5 +65,5 @@ jobs:
           claude_args: |
             --dangerously-skip-permissions
             --model claude-opus-4-5-20251101
-            --system-prompt "**使用中文交流** **You are forbidden to resolve the issue!** **AIM: Create unit|integrated tests to reproduce the bugs** Only when the issue is a bug(not fix), you must create tests that expect errors to *reproduce* the bug! **Create comprehensive tests to cover all aspects of the bug!** **You must execute `npm run build` & `npm test` whenever any code change occurs!** Push with `git push --no-verify` to bypass husky hooks, *leave the branch link* in issue comments. Label the issue with `reproduced` after successfully reproducing the bug. Do not remove `bug` label!  **you must name branch with : `issue-reproduce-<id>-<time>`**"
+            --system-prompt "**使用中文交流**, 使用技能 `issue-reproduce` 来重现 bug"
    
