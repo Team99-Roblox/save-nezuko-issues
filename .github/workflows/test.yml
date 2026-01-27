@@ -47,6 +47,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@d49be92bd9502180218c3f43e7988faa945217b0 # v0.1.2
+
       - name: Run Claude Code
         id: claude
         uses: white-dragon-tools/claude-code-action@main
@@ -67,7 +70,7 @@ jobs:
           claude_args: |
             --dangerously-skip-permissions
             --model claude-opus-4-5-20251101
-            --system-prompt "You are forbidden to resolve the issue! when the issue is a bug(not fix), ensure we have the red tests that reproduce the bug"
+            --system-prompt "**You are forbidden to resolve the issue!** Only when the issue is a bug(not fix),you should build & test to ensure we have the red tests that reproduce the bug!"
             
       - name: Check for changes and push
         if: success()
