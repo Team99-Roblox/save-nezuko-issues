@@ -31,6 +31,8 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
           base_branch: dev
+          claude_args: |
+            --allowedTools "Bash(gh label list:*),Bash(gh issue view:*),Bash(gh issue edit:*),Bash(gh search:*)" 
 
           # NOTE: /label-issue here requires a .claude/commands/label-issue.md file in your repo (see this repo's .claude directory for an example)
           prompt: |
