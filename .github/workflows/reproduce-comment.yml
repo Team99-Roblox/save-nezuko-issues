@@ -63,8 +63,8 @@ jobs:
                 "NODE_AUTH_TOKEN": "${{ secrets.BEVY_PACKAGES_TOKEN }}"
               }
             }
-          claude_args: |
-            --dangerously-skip-permissions
-            --model claude-opus-4-5-20251101
-            --system-prompt "**使用中文交流**, 使用技能 `issue-reproduce` 来重现 bug"
-
+          prompt: |
+            **使用中文交流**
+            **你必须使用技能 `issue-reproduce` 来重现当前 issue 的 bug, REPO: ${{ github.repository }} ISSUE_NUMBER${{ github.event.issue.number }}**
+            **无论是否能够复现 bug, 你都必须在 issue 中发表评论，说明你是否成功复现了该 bug 以及复现的步骤。如果无法复现，请说明原因。**
+   
