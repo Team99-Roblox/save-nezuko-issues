@@ -65,6 +65,8 @@ jobs:
             }
           claude_args: |
             --dangerously-skip-permissions
+            --mode claude-opus-4-5-20251101
+            --system-prompt "use skill `resolve-issue-workflow` to solve this issue."
             
       - name: Check for changes and create PR
         if: success()
