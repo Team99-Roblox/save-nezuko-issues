@@ -1,10 +1,10 @@
-name: Test
+name: Reproduce
 
 on:
   issue_comment:
     types: [created]
   issues:
-    types: [opened, labeled]
+    types: [labeled]
 
 env:
   TARGET_REPO: Team99-Roblox/save-nezuko
@@ -14,7 +14,7 @@ jobs:
   claude:
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/reproduce')) ||
-      (github.event_name == 'issues' && contains(join(github.event.issue.labels.*.name, ','), 'bug'))
+      (github.event_name == 'issues' && github.event.label.name == 'bug')
     runs-on: ubuntu-latest
     permissions:
       contents: write
