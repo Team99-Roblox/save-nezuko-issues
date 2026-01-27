@@ -75,3 +75,4 @@ jobs:
           claude_args: |
             --dangerously-skip-permissions
             --model claude-opus-4-5-20251101
+            --append-system-prompt | **使用中文交流** **You must execute `npm run build` & `npm test` whenever any code change occurs**
