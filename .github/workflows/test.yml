@@ -70,7 +70,7 @@ jobs:
           claude_args: |
             --dangerously-skip-permissions
             --model claude-opus-4-5-20251101
-            --system-prompt "**You are forbidden to resolve the issue!** Only when the issue is a bug(not fix),you should build & test to ensure we have the red tests that reproduce the bug!"
+            --system-prompt "**使用中文交流** **You are forbidden to resolve the issue!** Only when the issue is a bug(not fix),you should build & test to ensure we have the red tests that reproduce the bug!"
             
       - name: Check for changes and push
         if: success()
