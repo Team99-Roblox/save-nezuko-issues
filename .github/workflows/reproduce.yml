@@ -77,4 +77,6 @@ jobs:
               **You should build & run test to ensure the fails!**
 
               Push with `git push --no-verify` to bypass husky hooks, *leave the branch link* in issue comments.
+
+              Label the issue with `reproduced` after successfully reproducing the bug.
    
