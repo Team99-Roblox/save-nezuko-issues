@@ -70,7 +70,7 @@ jobs:
 
               **You are forbidden to resolve the issue!** 
 
-              **AIM: Reproduce the bugs**
+              **AIM: Create unit|intergrated tests to reproduce the bugs**
 
               Only when the issue is a bug(not fix), you should create tests that expect errors to *reproduce* the bug!
               
