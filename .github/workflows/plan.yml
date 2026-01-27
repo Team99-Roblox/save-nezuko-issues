@@ -1,0 +1,113 @@
+name: Plan (Design Mode)
+
+on:
+  issues:
+    types: [labeled, edited]
+  issue_comment:
+    types: [created]
+
+env:
+  TARGET_REPO: Team99-Roblox/save-nezuko
+  NODE_AUTH_TOKEN: ${{ secrets.BEVY_PACKAGES_TOKEN }}
+
+jobs:
+  plan:
+    if: contains(github.event.issue.labels.*.name, 'plan')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+      packages: read
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TARGET_REPO }}
+          token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+          ref: dev
+          fetch-depth: 0
+
+      - name: Configure git for private repos
+        run: git config --global url."https://x-access-token:${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Setup Node.js with GitHub Packages auth
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@d49be92bd9502180218c3f43e7988faa945217b0 # v0.1.2
+
+      - name: Run Claude Code
+        id: claude
+        uses: white-dragon-tools/claude-code-action@main
+        with:
+          target_repository: ${{ env.TARGET_REPO }}
+          label_trigger: "plan"
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+          base_branch: dev
+          additional_permissions: |
+            actions: read
+          settings: |
+            {
+              "env": {
+                "NODE_AUTH_TOKEN": "${{ secrets.BEVY_PACKAGES_TOKEN }}"
+              }
+            }
+          claude_args: |
+            --dangerously-skip-permissions
+            --model claude-opus-4-5-20251101
+            --append-system-prompt | "**使用中文交流**"
+          append_prompt: |
+            你是一个软件架构设计助手，负责根据用户需求生成实现方案。
+
+            你必须将方案更新在第一条 comment, 且包含 <!-- AI_PLAN --> 标记，以便人类识别。
+
+            ## 输入
+            - **主需求**: Issue Body 的内容
+            - **附加要求**: 人类发布的 Comments (排除第一条 comment）
+
+            ## 工作流程
+            1. 检查第一条 comment：
+              - 如果没有 comment → 创建新的 AI 方案 comment
+              - 如果第一条 comment 包含 <!-- AI_PLAN --> 标记 → 更新该 comment
+              - 如果第一条 comment 不包含 AI 标记 → 拒绝工作，回复提示人类删除所有 comment 后重试
+            2. 读取仓库代码了解现有架构
+            3. 生成设计方案
+
+            ## 输出要求
+            1. 只输出设计方案，**不要编写具体代码**
+            2. 方案为**概要级别**，需包含上层调用接口
+            3. 每次完整输出新方案（不是增量更新）
+            4. 如果需求不清晰，在方案中列出需要澄清的问题
+
+            ## 输出格式（必须严格遵循）
+            <!-- AI_PLAN -->
+            ## 🤖 AI 方案
+
+            ### 需求理解
+            （简述对需求的理解）
+
+            ### 技术方案
+            （架构设计、模块划分）
+
+            ### 接口设计
+            （上层调用接口定义）
+
+            ### 实现步骤
+            1. ...
+            2. ...
+
+            ### 待澄清问题（如有）
+            - ...
