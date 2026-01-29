@@ -1,0 +1,56 @@
+name: Feishu Notification
+
+on:
+  issues:
+    types: [opened, closed, reopened]
+  release:
+    types: [published]
+
+jobs:
+  notify-issue:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 发送 Issue 通知到飞书
+        uses: foxundermoon/feishu-action@v2
+        with:
+          url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          msg_type: post
+          content: |
+            post:
+              zh_cn:
+                title: "📋 Issue ${{ github.event.action }}"
+                content:
+                  - - tag: text
+                      text: "仓库: ${{ github.repository }}"
+                  - - tag: text
+                      text: "标题: ${{ github.event.issue.title }}"
+                  - - tag: text
+                      text: "操作者: ${{ github.actor }}"
+                  - - tag: a
+                      text: "查看 Issue"
+                      href: "${{ github.event.issue.html_url }}"
+
+  notify-release:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 发送发版通知到飞书
+        uses: foxundermoon/feishu-action@v2
+        with:
+          url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          msg_type: post
+          content: |
+            post:
+              zh_cn:
+                title: "🚀 新版本发布: ${{ github.event.release.tag_name }}"
+                content:
+                  - - tag: text
+                      text: "仓库: ${{ github.repository }}"
+                  - - tag: text
+                      text: "版本: ${{ github.event.release.tag_name }}"
+                  - - tag: text
+                      text: "发布者: ${{ github.actor }}"
+                  - - tag: a
+                      text: "查看 Release"
+                      href: "${{ github.event.release.html_url }}"
