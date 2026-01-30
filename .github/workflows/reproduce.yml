@@ -6,7 +6,79 @@ on:
 
 env:
   TARGET_REPO: Team99-Roblox/save-nezuko
+  NODE_AUTH_TOKEN: ${{ secrets.BEVY_PACKAGES_TOKEN }}name: Reproduce (Bug Label)
+
+on:
+  issues:
+    types: [labeled]
+
+env:
+  TARGET_REPO: Team99-Roblox/save-nezuko
   NODE_AUTH_TOKEN: ${{ secrets.BEVY_PACKAGES_TOKEN }}
+
+jobs:
+  claude:
+    if: github.event.label.name == 'bug'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+      packages: read
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TARGET_REPO }}
+          token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+          ref: dev
+          fetch-depth: 0
+
+      - name: Configure git for private repos
+        run: git config --global url."https://x-access-token:${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Setup Node.js with GitHub Packages auth
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@d49be92bd9502180218c3f43e7988faa945217b0 # v0.1.2
+
+      - name: Run Claude Code
+        id: claude
+        uses: white-dragon-tools/claude-code-action@main
+        with:
+          target_repository: ${{ env.TARGET_REPO }}
+          label_trigger: "bug"
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
+          base_branch: dev
+          additional_permissions: |
+            actions: read
+          settings: |
+            {
+              "env": {
+                "NODE_AUTH_TOKEN": "${{ secrets.BEVY_PACKAGES_TOKEN }}"
+              }
+            }
+          append_prompt: |
+            "**你必须使用技能 `issue-reproduce` 来重现当前 issue 的 bug**, **无论是否能够复现 bug, 你都必须在 issue 中发表评论，说明你是否成功复现了该 bug 以及复现的步骤。如果无法复现，请说明原因。"
+          claude_args: |
+            --dangerously-skip-permissions
+            --model claude-opus-4-5-20251101
+            --append-system-prompt "**使用中文交流**"
+
+
 
 jobs:
   claude:
