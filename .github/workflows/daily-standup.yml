@@ -3,7 +3,7 @@ name: Daily Standup Summary
 on:
   schedule:
     # 每天早上9点（UTC+8，即 UTC 1:00）运行
-    - cron: '0 1 * * 1-5'
+    - cron: '0 1 * * *'
   workflow_dispatch:
 
 env:
