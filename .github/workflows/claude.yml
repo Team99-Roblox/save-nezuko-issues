@@ -75,4 +75,10 @@ jobs:
           claude_args: |
             --dangerously-skip-permissions
             --model claude-opus-4-5-20251101
-            --append-system-prompt | **使用中文交流** **You must execute `npm run build` & `npm test` whenever any code change occurs**
+            --append-system-prompt | **使用中文交流**
+          append_prompt: |
+            ## 其他要求
+            - 梳理关联模块
+            - 你**必须**安排`异步代理`阅读所有关联的模块代码, 了解上下文.
+            - 你可以联网搜索解决方案.
+            - 你可以使用 gh 工具 **搜索关联 issue**
