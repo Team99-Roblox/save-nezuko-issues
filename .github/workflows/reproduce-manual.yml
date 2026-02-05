@@ -33,6 +33,12 @@ jobs:
           clean: false
           path: save-nezuko
 
+      - name: Reset git state
+        working-directory: save-nezuko
+        run: |
+          git reset --hard HEAD
+          git clean -fd -e node_modules -e .pnpm-store
+
       - name: Configure git for private repos
         run: git config --global url."https://x-access-token:${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}@github.com/".insteadOf "https://github.com/"
 
