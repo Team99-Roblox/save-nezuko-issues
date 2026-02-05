@@ -23,6 +23,13 @@ jobs:
       actions: read
       packages: read
     steps:
+      - name: Clean workspace
+        run: |
+          if (Test-Path "${{ github.workspace }}") {
+            cmd /c "rmdir /s /q ${{ github.workspace }}"
+          }
+        shell: pwsh
+
       - name: Checkout target repository
         uses: actions/checkout@v4
         with:
