@@ -27,6 +27,7 @@ jobs:
         shell: powershell
         run: |
           git config --global --unset-all url.git@github.com:.insteadOf 2>$null
+          git config --global --add safe.directory '*'
           exit 0
 
       - name: Checkout target repository
