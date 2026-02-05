@@ -43,6 +43,9 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v3
 
+      - name: Set pnpm store to user directory
+        run: pnpm config set store-dir $env:USERPROFILE\.pnpm-store
+
       - name: Install dependencies
         run: pnpm install
 
