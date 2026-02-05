@@ -74,35 +74,5 @@ jobs:
           rokit --version
 
       - name: Run Claude Code
-        id: claude
-        uses: white-dragon-tools/claude-code-action@main
-        with:
-          target_repository: ${{ env.TARGET_REPO }}
-          issue_number: ${{ github.event.inputs.issue_number }}
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          github_token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
-          base_branch: dev
-          work_dir: save-nezuko
-          additional_permissions: |
-            actions: read
-          settings: |
-            {
-              "env": {
-                "NODE_AUTH_TOKEN": "${{ secrets.BEVY_PACKAGES_TOKEN }}"
-              }
-            }
-          claude_args: |
-            --dangerously-skip-permissions
-            --model claude-opus-4-5-20251101
-            --append-system-prompt "**使用中文交流**"
-          append_prompt: |
-            ## 任务描述
-            **你必须使用技能 `issue-reproduce` 来重现当前 issue 的 bug**
-            *如果技能不可用, 你必须立刻中止会话!*
-             **无论是否能够复现 bug, 你都必须在 issue 中发表评论，说明你是否成功复现了该 bug 以及复现的步骤。如果无法复现，请说明原因。"
-
-             ## 其他要求
-            - 梳理关联模块
-            - 你**必须**安排`异步代理`阅读所有关联的模块代码, 了解上下文.
-            - 你可以联网搜索解决方案.
-            - 你可以使用 gh 工具 **搜索关联 issue**
+        working-directory: save-nezuko
+        run: cc hi
