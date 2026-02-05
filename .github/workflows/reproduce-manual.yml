@@ -36,8 +36,9 @@ jobs:
       - name: Reset git state
         working-directory: save-nezuko
         run: |
-          git reset --hard HEAD
+          git reset --hard origin/dev
           git clean -fd -e node_modules -e .pnpm-store
+        continue-on-error: true
 
       - name: Configure git for private repos
         run: git config --global url."https://x-access-token:${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}@github.com/".insteadOf "https://github.com/"
@@ -50,6 +51,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v3
+        with:
+          package_json_file: save-nezuko/package.json
 
       - name: Set pnpm store to user directory
         run: pnpm config set store-dir $env:USERPROFILE\.pnpm-store
