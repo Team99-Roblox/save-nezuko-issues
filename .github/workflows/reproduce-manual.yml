@@ -82,4 +82,5 @@ jobs:
 
       - name: Run Droid
         working-directory: save-nezuko
-        run: C:\Users\User\bin\droid.exe -p hi
+        shell: cmd
+        run: start /wait cmd /c "C:\Users\User\bin\droid.exe -p hi"
