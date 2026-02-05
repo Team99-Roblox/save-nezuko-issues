@@ -23,13 +23,6 @@ jobs:
       actions: read
       packages: read
     steps:
-      - name: Clean workspace
-        run: |
-          if (Test-Path "${{ github.workspace }}") {
-            cmd /c "rmdir /s /q ${{ github.workspace }}"
-          }
-        shell: pwsh
-
       - name: Checkout target repository
         uses: actions/checkout@v4
         with:
@@ -37,6 +30,7 @@ jobs:
           token: ${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}
           ref: dev
           fetch-depth: 0
+          clean: false
 
       - name: Configure git for private repos
         run: git config --global url."https://x-access-token:${{ secrets.SAVE_NEZUKO_CLAUDE_CROSS_REPO }}@github.com/".insteadOf "https://github.com/"
