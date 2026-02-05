@@ -83,4 +83,4 @@ jobs:
       - name: Run Droid
         working-directory: save-nezuko
         shell: cmd
-        run: start /wait cmd /c "C:\Users\User\bin\droid.exe -p hi"
+        run: conhost -- C:\Users\User\bin\droid.exe -p hi
