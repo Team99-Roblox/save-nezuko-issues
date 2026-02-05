@@ -73,6 +73,6 @@ jobs:
           }
           rokit --version
 
-      - name: Run Claude Code
+      - name: Run Droid
         working-directory: save-nezuko
-        run: d:\software\cc.bat hi
+        run: droid hi
