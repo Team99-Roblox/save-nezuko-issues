@@ -65,10 +65,11 @@ jobs:
         shell: powershell
         run: |
           if (-not (Get-Command rokit -ErrorAction SilentlyContinue)) {
-            Invoke-WebRequest -Uri "https://github.com/rojo-rbx/rokit/releases/latest/download/rokit-windows-x86_64.zip" -OutFile "$env:TEMP\rokit.zip"
+            $release = Invoke-RestMethod -Uri "https://api.github.com/repos/rojo-rbx/rokit/releases/latest"
+            $asset = $release.assets | Where-Object { $_.name -like "*windows-x86_64.zip" } | Select-Object -First 1
+            Invoke-WebRequest -Uri $asset.browser_download_url -OutFile "$env:TEMP\rokit.zip"
             Expand-Archive -Path "$env:TEMP\rokit.zip" -DestinationPath "$env:USERPROFILE\.rokit\bin" -Force
             $env:PATH = "$env:USERPROFILE\.rokit\bin;$env:PATH"
-            [Environment]::SetEnvironmentVariable("PATH", "$env:USERPROFILE\.rokit\bin;$([Environment]::GetEnvironmentVariable('PATH', 'User'))", "User")
           }
           rokit --version
 
