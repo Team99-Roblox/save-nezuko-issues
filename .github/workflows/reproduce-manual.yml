@@ -24,7 +24,10 @@ jobs:
       packages: read
     steps:
       - name: Fix git config for HTTPS
-        run: git config --global --unset-all url.git@github.com:.insteadOf || true
+        shell: powershell
+        run: |
+          git config --global --unset-all url.git@github.com:.insteadOf 2>$null
+          exit 0
 
       - name: Checkout target repository
         uses: actions/checkout@v4
