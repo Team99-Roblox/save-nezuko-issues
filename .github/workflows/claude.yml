@@ -74,7 +74,7 @@ jobs:
             }
           claude_args: |
             --dangerously-skip-permissions
-            --model claude-opus-4-5-20251101
+            --model claude-opus-4-6
             --append-system-prompt "**使用中文交流**"
           append_prompt: |
             ## 其他要求
