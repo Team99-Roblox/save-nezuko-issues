@@ -82,5 +82,31 @@ jobs:
 
       - name: Run Droid
         working-directory: save-nezuko
-        shell: cmd
-        run: C:\Users\User\bin\droid.exe "请进行集成测试"
+        shell: powershell
+        run: |
+          $taskName = "DroidTask"
+          $action = New-ScheduledTaskAction -Execute "C:\Users\User\bin\droid.exe" -Argument '"请进行集成测试"' -WorkingDirectory "$PWD"
+          $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddSeconds(5)
+          $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+          $principal = New-ScheduledTaskPrincipal -UserId "User" -LogonType Interactive -RunLevel Highest
+          
+          Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
+          Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings -Principal $principal
+          
+          Start-Sleep -Seconds 10
+          Start-ScheduledTask -TaskName $taskName
+          
+          # 等待任务完成
+          $timeout = 600
+          $elapsed = 0
+          while ($elapsed -lt $timeout) {
+            $task = Get-ScheduledTask -TaskName $taskName
+            if ($task.State -eq "Ready") { break }
+            Start-Sleep -Seconds 10
+            $elapsed += 10
+            Write-Host "Waiting... ($elapsed s)"
+          }
+          
+          $result = Get-ScheduledTaskInfo -TaskName $taskName
+          Write-Host "Task completed with result: $($result.LastTaskResult)"
+          Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
