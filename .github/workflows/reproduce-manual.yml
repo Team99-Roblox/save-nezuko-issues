@@ -82,10 +82,7 @@ jobs:
 
       - name: Run Droid
         working-directory: save-nezuko
-        shell: powershell
+        shell: cmd
         run: |
-          $env:FORCE_COLOR = "1"
-          $process = Start-Process -FilePath "conhost" -ArgumentList "--", "C:\Users\User\bin\droid.exe", "请进行集成测试" -NoNewWindow -Wait -PassThru -RedirectStandardOutput "$env:TEMP\droid_out.txt" -RedirectStandardError "$env:TEMP\droid_err.txt"
-          Get-Content "$env:TEMP\droid_out.txt" -ErrorAction SilentlyContinue
-          Get-Content "$env:TEMP\droid_err.txt" -ErrorAction SilentlyContinue
-          exit $process.ExitCode
+          conhost -- C:\Users\User\bin\droid.exe 请进行集成测试 > %TEMP%\droid_out.txt 2>&1
+          type %TEMP%\droid_out.txt
