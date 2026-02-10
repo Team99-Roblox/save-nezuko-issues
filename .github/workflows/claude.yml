@@ -52,6 +52,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+        
+      - name: Setup Rokit
+        uses: CompeyDev/setup-rokit@d49be92bd9502180218c3f43e7988faa945217b0 # v0.1.2
 
       - name: Run Claude Code
         id: claude
