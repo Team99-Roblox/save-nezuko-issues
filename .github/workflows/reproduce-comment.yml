@@ -93,13 +93,13 @@ jobs:
             ### 1. 创建复现分支
             
             
-            **You must name branch with: `issue-reproduce-<id>-<time>`**
+            **You must name branch with: `claude/issue-reproduce-<id>-<time>`**
             
             ```bash
             git checkout -b {branch}
             ```
             
-            分支名需匹配 `issue-reproduce*` pattern。
+            分支名需匹配 `claude/issue-reproduce*` pattern。
             
             ### 2. 编写 失败/成功 测试用例
             
